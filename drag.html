@@ -18,32 +18,32 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/custom-resize.css">
 </head>
 
-<body >
+<body class="background">
 <!--[if lte IE 9]>
 <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade
     your browser</a> to improve your experience and security.</p>
 <![endif]-->
-
 <h1 class="m-5 text-center">Brainx Interact.JS Component</h1>
+
 
 <div class="container">
     <ul class="nav nav-pills">
-        <li ><a class="active" href="index.html">Tap event</a></li>
-        <li><a href="resize.html">Resize</a> </li>
-        <li><a href="drag.html">Drag</a></li>
+        <li ><a  href="index.html">Tap event</a></li>
+        <li><a href="resize.html">Resize</a></li>
+        <li><a class="active" href="drag.html">Drag</a></li>
     </ul>
 </div>
 
 <!-- Add your site or application content here -->
-<div class="tap-target">
-    <p>Tap to change color</p>
-    <p>Doubletap to change size</p>
-    <p>Hold to rotate</p>
-</div>
+<div class="container">
+    <div class="resize-drag">
+        <div drag-handle> Drag from here</div>
 
+    </div>
+</div>
 
 <script src="js/vendor/modernizr-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -66,20 +66,33 @@
 <script src="https://www.google-analytics.com/analytics.js" async defer></script>
 
 <script>
-    interact('.tap-target')
-        .on('tap', function (event) {
-            event.currentTarget.classList.toggle('switch-bg');
-            event.preventDefault();
+
+    interact('.resize-drag')
+        .draggable({
+            onmove: dragMoveListener,
+            allowFrom: '[drag-handle]',
         })
-        .on('doubletap', function (event) {
-            event.currentTarget.classList.toggle('large');
-            event.currentTarget.classList.remove('rotate');
-            event.preventDefault();
+        .resizable({
+            edges: { right: '[resize-edges~=right]', bottom: '[resize-edges~=bottom]' }
         })
-        .on('hold', function (event) {
-            event.currentTarget.classList.toggle('rotate');
-            event.currentTarget.classList.remove('large');
-        });
+
+    ;
+
+    function dragMoveListener (event) {
+        var target = event.target,
+            // keep the dragged position in the data-x/data-y attributes
+            x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+            y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+        // translate the element
+        target.style.webkitTransform =
+            target.style.transform =
+                'translate(' + x + 'px, ' + y + 'px)';
+
+        // update the posiion attributes
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
+    }
 </script>
 </body>
 
